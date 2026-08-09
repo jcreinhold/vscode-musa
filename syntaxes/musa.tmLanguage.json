@@ -70,7 +70,7 @@
       "patterns": [
         {
           "name": "keyword.control.musa",
-          "match": "\\b(around|arranger|assign|at|bar|bus|chord|clef|composer|copyright|crescendo|diminuendo|down|dynamic|ending|fragment|grace|groove|harmony|improvise|invert|key|library|mark|master|meter|mobile|modulate|motif|note|output|over|part|patch|performance|phrase|piece|pitch|profile|repeat|rest|retrograde|route|score|section|send|slur|stretch|studio|subtitle|tempo|to|transpose|tuplet|up|voice|with)\\b"
+          "match": "\\b(around|arranger|assign|at|bar|bus|clef|composer|copyright|crescendo|diminuendo|down|dynamic|ending|fragment|grace|groove|harmony|improvise|invert|key|library|mark|master|meter|mobile|modulate|motif|note|output|over|part|patch|performance|phrase|piece|pitch|profile|repeat|rest|retrograde|route|score|section|send|senza|slur|stretch|studio|subtitle|tempo|to|transpose|tuplet|up|voice|with)\\b"
         }
       ]
     },
@@ -94,7 +94,7 @@
       "patterns": [
         {
           "name": "constant.other.pitch.musa",
-          "match": "\\b[a-g](ss|ff|[sfn])?-?[0-9]+\\b"
+          "match": "\\b[a-g](##|bb|[#bn])?-?[0-9]+\\b"
         }
       ]
     },
@@ -108,6 +108,10 @@
     },
     "numbers": {
       "patterns": [
+        {
+          "name": "constant.numeric.duration.musa",
+          "match": "/[0-9]+\\.*"
+        },
         {
           "name": "constant.numeric.duration.musa",
           "match": "\\b[0-9]+/[0-9]+\\b"
@@ -142,7 +146,7 @@
       "patterns": [
         {
           "name": "punctuation.separator.musa",
-          "match": ",|\\.|:|;"
+          "match": "#|,|\\.|/|:|;|>|\\^|\\|"
         }
       ]
     },

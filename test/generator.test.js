@@ -80,3 +80,35 @@ test('a spelled punctuation mark is an operator, a bracket, or a separator', () 
     assert.ok(marks.includes(mark), `the fixture lost "${mark}" — check the operator split in the generator`);
   }
 });
+
+// The two patterns no fixture can check.
+//
+// Keywords, units and punctuation come from `spellings.json`, so a change to
+// the vocabulary shows up here as a failing diff. Pitch and duration do not:
+// they are the lexer's own regexes transcribed by hand, and nothing in the
+// fixtures would notice if they drifted. They did drift, twice, and this file
+// passed through both — the accidental spelling moved from `fs3` to `f#3`,
+// and durations grew the short form `c4/4`. So the transcription is pinned
+// against spellings taken from the corpus itself.
+test('the pitch and duration patterns paint the syntax the corpus is written in', () => {
+  const { spellings, classes } = fixtures();
+  const grammar = build(spellings, classes);
+  const whole = (source) => new RegExp(`^(?:${source})$`);
+  const pitch = whole(grammar.repository.pitch.patterns[0].match);
+  const durations = grammar.repository.numbers.patterns
+    .filter((rule) => rule.name === SCOPES.duration)
+    .map((rule) => whole(rule.match));
+  const painted = (text) => durations.some((rule) => rule.test(text));
+
+  // `b` is both a letter and a flat: `b2` is B, `bb2` is B flat.
+  for (const written of ['c4', 'a-1', 'a#5', 'ab3', 'b2', 'bb2', 'f##3', 'cn5']) {
+    assert.ok(pitch.test(written), `"${written}" is a pitch the lexer accepts`);
+  }
+  // Both spellings of a duration, dots and all.
+  for (const written of ['/1', '/16', '/2.', '/4..', '1/4', '3/8']) {
+    assert.ok(painted(written), `"${written}" is a duration the lexer accepts`);
+  }
+  // And what is not a duration stays a plain number: a tempo is not a rhythm.
+  assert.ok(!painted('96'), 'a metronome mark is a number');
+  assert.ok(!painted('0.55'), 'a gain is a number');
+});

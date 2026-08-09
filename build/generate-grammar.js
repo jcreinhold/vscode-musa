@@ -138,17 +138,28 @@ function build(spellings, classes) {
       units: {
         patterns: [{ name: SCOPES.unit, match: `\\b(${words(units)})\\b` }],
       },
-      // `[a-g](ss|ff|[sfn])?-?[0-9]+` — a written pitch.
+      // `[a-g](##|bb|[#bn])?-?[0-9]+` — a written pitch. `b` is both a letter
+      // and a flat, and the two never collide because the letter is always
+      // first: `b2` is B, `bb2` is B flat, `bbb2` is B double flat.
       pitch: {
-        patterns: [{ name: SCOPES.pitch, match: '\\b[a-g](ss|ff|[sfn])?-?[0-9]+\\b' }],
+        patterns: [{ name: SCOPES.pitch, match: '\\b[a-g](##|bb|[#bn])?-?[0-9]+\\b' }],
       },
       // `[PMm][0-9]+` — an interval: quality and size.
       interval: {
         patterns: [{ name: SCOPES.pitch, match: '\\b[PMm][0-9]+\\b' }],
       },
-      // Rational, float, integer — the lexer’s own order.
+      // Rational, float, integer — the lexer’s own order, and the short
+      // duration ahead of all three.
+      //
+      // `/4` and `/4..` are three token kinds in the lexer (`Slash`,
+      // `Integer`, `Dot`) and one word to a reader, so they are painted as
+      // one: a duration is what the composer sees, and a `/` left as
+      // punctuation beside a number left as a plain integer would be the
+      // grammar disagreeing with the thing it describes. It comes first
+      // because `\b[0-9]+\b` would otherwise claim the numeral.
       numbers: {
         patterns: [
+          { name: SCOPES.duration, match: '/[0-9]+\\.*' },
           { name: SCOPES.duration, match: '\\b[0-9]+/[0-9]+\\b' },
           { name: SCOPES.number, match: '\\b[0-9]+\\.[0-9]+\\b' },
           { name: SCOPES.number, match: '\\b[0-9]+\\b' },
