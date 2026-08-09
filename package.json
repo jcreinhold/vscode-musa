@@ -1,0 +1,87 @@
+{
+  "name": "vscode-musa",
+  "displayName": "musa",
+  "description": "Language support for musa: diagnostics, hover, formatting, completion, quick fixes, and references from the musa language server",
+  "version": "0.1.0",
+  "publisher": "jcreinhold",
+  "license": "Apache-2.0",
+  "repository": "https://github.com/jcreinhold/vscode-musa",
+  "engines": {
+    "vscode": "^1.96.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "activationEvents": [
+    "onLanguage:musa"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "musa",
+        "aliases": [
+          "musa"
+        ],
+        "extensions": [
+          ".musa"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "musa",
+        "scopeName": "source.musa",
+        "path": "./syntaxes/musa.tmLanguage.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "musa.restartServer",
+        "title": "Musa: Restart Language Server"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "musa",
+      "properties": {
+        "musa.server.path": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Path to the `musa-lsp` binary. Leave empty to find it on `PATH`. Build it with `cargo build --release -p musa-lsp` in the musa repository."
+        },
+        "musa.trace.server": {
+          "type": "string",
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ],
+          "default": "off",
+          "description": "Trace language-server communication for debugging"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "grammar": "node build/generate-grammar.js",
+    "grammar:check": "node build/generate-grammar.js --check",
+    "check": "npm run check-types && npm run grammar:check",
+    "check-types": "tsc --noEmit",
+    "compile": "npm run check && node esbuild.js",
+    "package": "npm run check && node esbuild.js --production",
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@types/vscode": "^1.96.0",
+    "@vscode/vsce": "^3.6.2",
+    "esbuild": "^0.25.0",
+    "typescript": "^5.8.0"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^9.0.1"
+  }
+}
