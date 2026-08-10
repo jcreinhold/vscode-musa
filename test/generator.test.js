@@ -17,11 +17,12 @@ function fixtures() {
   return {
     spellings: JSON.parse(readFileSync(join(FIXTURES, 'spellings.json'), 'utf8')),
     classes: JSON.parse(readFileSync(join(FIXTURES, 'token-classes.json'), 'utf8')),
+    moduleNames: JSON.parse(readFileSync(join(FIXTURES, 'module-names.json'), 'utf8')),
   };
 }
 
 test('every token class has a scope', () => {
-  const { spellings, classes } = fixtures();
+  const { spellings, classes, moduleNames } = fixtures();
   for (const name of classes) {
     assert.ok(name in SCOPES, `TokenClass "${name}" has no scope`);
   }
@@ -29,20 +30,20 @@ test('every token class has a scope', () => {
   for (const [text, className] of spellings) {
     assert.ok(classes.includes(className), `"${text}" claims unknown class "${className}"`);
   }
-  assert.doesNotThrow(() => build(spellings, classes));
+  assert.doesNotThrow(() => build(spellings, classes, moduleNames));
 });
 
 test('the grammar is deterministic', () => {
-  const { spellings, classes } = fixtures();
+  const { spellings, classes, moduleNames } = fixtures();
   assert.equal(
-    JSON.stringify(build(spellings, classes)),
-    JSON.stringify(build(spellings, classes)),
+    JSON.stringify(build(spellings, classes, moduleNames)),
+    JSON.stringify(build(spellings, classes, moduleNames)),
   );
 });
 
 test('every keyword the fixture spells is in the keyword pattern', () => {
-  const { spellings, classes } = fixtures();
-  const grammar = build(spellings, classes);
+  const { spellings, classes, moduleNames } = fixtures();
+  const grammar = build(spellings, classes, moduleNames);
   const keywordRule = grammar.repository.keywords.patterns[0].match;
   for (const [text, className] of spellings) {
     if (className === 'keyword') {
@@ -55,15 +56,15 @@ test('every keyword the fixture spells is in the keyword pattern', () => {
 });
 
 test('the committed grammar is fresh', () => {
-  const { spellings, classes } = fixtures();
+  const { spellings, classes, moduleNames } = fixtures();
   const committed = readFileSync(join(__dirname, '..', 'syntaxes', 'musa.tmLanguage.json'), 'utf8');
-  assert.equal(committed, `${JSON.stringify(build(spellings, classes), null, 2)}\n`,
+  assert.equal(committed, `${JSON.stringify(build(spellings, classes, moduleNames), null, 2)}\n`,
     'syntaxes/musa.tmLanguage.json is stale — run npm run grammar');
 });
 
 test('the patterns are valid regexes in the fixture’s own order', () => {
-  const { spellings, classes } = fixtures();
-  const grammar = build(spellings, classes);
+  const { spellings, classes, moduleNames } = fixtures();
+  const grammar = build(spellings, classes, moduleNames);
   for (const rule of Object.values(grammar.repository)) {
     for (const pattern of rule.patterns ?? []) {
       for (const source of [pattern.match, pattern.begin, pattern.end].filter(Boolean)) {
@@ -91,8 +92,8 @@ test('a spelled punctuation mark is an operator, a bracket, or a separator', () 
 // and durations grew the short form `c4/4`. So the transcription is pinned
 // against spellings taken from the corpus itself.
 test('the pitch and duration patterns paint the syntax the corpus is written in', () => {
-  const { spellings, classes } = fixtures();
-  const grammar = build(spellings, classes);
+  const { spellings, classes, moduleNames } = fixtures();
+  const grammar = build(spellings, classes, moduleNames);
   const whole = (source) => new RegExp(`^(?:${source})$`);
   const pitch = whole(grammar.repository.pitch.patterns[0].match);
   const durations = grammar.repository.numbers.patterns
@@ -111,4 +112,26 @@ test('the pitch and duration patterns paint the syntax the corpus is written in'
   // And what is not a duration stays a plain number: a tempo is not a rhythm.
   assert.ok(!painted('96'), 'a metronome mark is a number');
   assert.ok(!painted('0.55'), 'a gain is a number');
+});
+
+test('import and mod statements scope borrowed words as names, not keywords', () => {
+  const { spellings, classes, moduleNames } = fixtures();
+  const grammar = build(spellings, classes, moduleNames);
+
+  // The region exists, opens on the two statement keywords, and closes on `;`.
+  const region = grammar.repository.imports.patterns[0];
+  assert.equal(region.begin, '\\b(import|mod)\\b');
+  assert.equal(region.end, ';');
+  assert.equal(region.beginCaptures[1].name, SCOPES.keyword);
+
+  // Every borrowed word is in the region's name pattern, so `std::harmony`
+  // paints `harmony` as a name while `harmony {` outside keeps the keyword.
+  const nameRule = region.patterns.find((rule) => rule.name === SCOPES.name);
+  for (const word of moduleNames) {
+    assert.ok(nameRule.match.includes(word), `borrowed word "${word}" missing from the import region`);
+  }
+
+  // The region is included before the flat keywords, or it never fires.
+  const order = grammar.patterns.map((rule) => rule.include);
+  assert.ok(order.indexOf('#imports') < order.indexOf('#keywords'), '#imports must precede #keywords');
 });

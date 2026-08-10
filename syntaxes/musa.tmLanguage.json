@@ -11,6 +11,9 @@
       "include": "#string"
     },
     {
+      "include": "#imports"
+    },
+    {
       "include": "#keywords"
     },
     {
@@ -66,11 +69,44 @@
         }
       ]
     },
+    "imports": {
+      "patterns": [
+        {
+          "begin": "\\b(import|mod)\\b",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.musa"
+            }
+          },
+          "end": ";",
+          "patterns": [
+            {
+              "include": "#comments"
+            },
+            {
+              "include": "#string"
+            },
+            {
+              "name": "keyword.control.musa",
+              "match": "\\bas\\b"
+            },
+            {
+              "name": "punctuation.separator.musa",
+              "match": "::"
+            },
+            {
+              "name": "variable.other.musa",
+              "match": "\\b(harmony|list|option|pitch|scale|[a-zA-Z_]+)\\b"
+            }
+          ]
+        }
+      ]
+    },
     "keywords": {
       "patterns": [
         {
           "name": "keyword.control.musa",
-          "match": "\\b(around|arranger|assign|at|bar|bus|clef|composer|copyright|crescendo|diminuendo|down|dynamic|ending|false|fn|fragment|grace|groove|harmony|improvise|invert|key|let|library|list|mark|master|match|meter|mobile|modulate|motif|music|none|note|option|output|over|part|patch|performance|phrase|piece|pitch|profile|repeat|rest|retrograde|route|score|section|send|senza|slur|some|stretch|studio|subtitle|tempo|to|transpose|true|tuplet|up|voice|with)\\b"
+          "match": "\\b(around|arranger|as|assign|at|bar|bus|chord|clef|composer|copyright|crescendo|degree|diminuendo|down|dynamic|ending|false|fn|fragment|frame|grace|groove|harmony|import|improvise|in|invert|key|let|library|list|make|mark|master|match|meter|mobile|mod|modulate|module|motif|music|none|note|option|output|over|part|patch|performance|phrase|piece|pitch|profile|repeat|rest|retrograde|route|scale|score|section|send|senza|signature|slur|some|stack|step|stretch|structure|studio|subtitle|template|tempo|to|transpose|true|tuplet|up|voice|with)\\b"
         }
       ]
     },

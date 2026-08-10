@@ -49,7 +49,7 @@ const words = (list) => list.map(escaped).join('|');
 
 /** Read the fixtures, or say plainly what is missing. */
 function loadFixtures() {
-  for (const name of ['spellings.json', 'token-classes.json']) {
+  for (const name of ['spellings.json', 'token-classes.json', 'module-names.json']) {
     if (!existsSync(join(FIXTURES, name))) {
       console.error(
         `${name} not found at ${FIXTURES}\n` +
@@ -60,11 +60,12 @@ function loadFixtures() {
   }
   const spellings = JSON.parse(readFileSync(join(FIXTURES, 'spellings.json'), 'utf8'));
   const classes = JSON.parse(readFileSync(join(FIXTURES, 'token-classes.json'), 'utf8'));
-  return { spellings, classes };
+  const moduleNames = JSON.parse(readFileSync(join(FIXTURES, 'module-names.json'), 'utf8'));
+  return { spellings, classes, moduleNames };
 }
 
 /** Build the grammar object from the fixtures. Exported for the tests. */
-function build(spellings, classes) {
+function build(spellings, classes, moduleNames = []) {
   // A class the generator has never heard of is the drift law speaking:
   // the lexer grew a class and this table was not taught it.
   for (const name of classes) {
@@ -94,6 +95,7 @@ function build(spellings, classes) {
     patterns: [
       { include: '#comments' },
       { include: '#string' },
+      { include: '#imports' },
       { include: '#keywords' },
       { include: '#use' },
       { include: '#units' },
@@ -126,6 +128,31 @@ function build(spellings, classes) {
         begin: '"',
         end: '"',
         patterns: [{ name: 'constant.character.escape.musa', match: '\\\\[^\\n]' }],
+      },
+      // `import` and `mod` statements are scoped regions: inside one, a
+      // word the module namespace may borrow (`module-names.json`, the
+      // parser's MODULE_NAME spellings) is a *name*, and `std::harmony`
+      // must not paint `harmony` as a keyword. The list comes from the
+      // musa repository's fixtures for the same reason the keywords do:
+      // this file refuses to own a vocabulary.
+      imports: {
+        patterns: [
+          {
+            begin: '\\b(import|mod)\\b',
+            beginCaptures: { 1: { name: SCOPES.keyword } },
+            end: ';',
+            patterns: [
+              { include: '#comments' },
+              { include: '#string' },
+              { name: SCOPES.keyword, match: '\\bas\\b' },
+              { name: 'punctuation.separator.musa', match: '::' },
+              {
+                name: SCOPES.name,
+                match: `\\b(${moduleNames.length ? `${words(moduleNames)}|` : ''}[a-zA-Z_]+)\\b`,
+              },
+            ],
+          },
+        ],
       },
       // The spelled keywords, priority 3 in the lexer — they beat the name
       // pattern here exactly as they do there.
@@ -186,8 +213,8 @@ function build(spellings, classes) {
 
 function main() {
   const check = process.argv.includes('--check');
-  const { spellings, classes } = loadFixtures();
-  const grammar = `${JSON.stringify(build(spellings, classes), null, 2)}\n`;
+  const { spellings, classes, moduleNames } = loadFixtures();
+  const grammar = `${JSON.stringify(build(spellings, classes, moduleNames), null, 2)}\n`;
   const committed = existsSync(OUTPUT) ? readFileSync(OUTPUT, 'utf8') : undefined;
   if (check) {
     if (committed !== grammar) {
