@@ -3,3 +3,8 @@ dist/
 out/
 *.vsix
 .DS_Store
+
+# Agent runtime artifacts
+.pi/sessions/
+.pi-subagents/
+.claude/settings.local.json
