@@ -1,18 +1,18 @@
 # vscode-musa
 
 Language support for [musa](https://github.com/jcreinhold/musa) — the notation-first music language — in VS Code:
-diagnostics, hover, formatting, completion, quick fixes, references, rename, folding, and semantic tokens from the
-musa language server, over instant TextMate highlighting.
+diagnostics, hover, formatting, completion, quick fixes, references, rename, folding, and semantic tokens from the musa
+language server, over instant TextMate highlighting.
 
 The extension owns no vocabulary and no musical knowledge:
 
 - **Highlighting** is a *generated* TextMate grammar (`syntaxes/musa.tmLanguage.json`), built by
-  `build/generate-grammar.js` from the musa repository's committed highlighting fixtures — the same
-  `spellings.json` / `token-classes.json` the desktop editor is generated from. A stale grammar fails
-  `npm run check`. The server's **semantic tokens** refine the highlighting once it is running, and killing the
-  server leaves the TextMate layer standing.
-- **Everything else** is the prompt-77 language server (`musa-lsp`) answering over stdio. The extension is a
-  launcher and a registration.
+  `build/generate-grammar.js` from the musa repository's committed highlighting fixtures — the same `spellings.json` /
+  `token-classes.json` the desktop editor is generated from. A stale grammar fails `npm run check`. The server's
+  **semantic tokens** refine the highlighting once it is running, and killing the server leaves the TextMate layer
+  standing.
+- **Everything else** is the prompt-77 language server (`musa-lsp`) answering over stdio. The extension is a launcher
+  and a registration.
 
 ## Install
 

@@ -301,12 +301,12 @@ Users can also configure MCP servers in `.vscode/mcp.json`:
 
 ### MCP vs Language Model Tools
 
-| Feature      | Language Model Tools                | MCP Servers                        |
-| ------------ | ----------------------------------- | ---------------------------------- |
-| Runs in      | Extension Host (VS Code API access) | Separate process                   |
-| Cross-client | VS Code only                        | Any MCP client (Claude Code, etc.) |
-| Setup        | Extension dependency                | Configuration or extension         |
-| Best for     | VS Code-specific queries            | Reusable compiler/prover tools     |
+| Feature | Language Model Tools | MCP Servers |
+| --- | --- | --- |
+| Runs in | Extension Host (VS Code API access) | Separate process |
+| Cross-client | VS Code only | Any MCP client (Claude Code, etc.) |
+| Setup | Extension dependency | Configuration or extension |
+| Best for | VS Code-specific queries | Reusable compiler/prover tools |
 
 ______________________________________________________________________
 
@@ -372,26 +372,26 @@ send prompts or receive responses.
 ### Available integration points
 
 1. **IDE MCP server:** Claude Code runs a local MCP server with tools including `mcp__ide__getDiagnostics` (reads VS
-    Code's Problems panel). The Musa extension contributes diagnostics automatically -- Claude Code can see them.
+   Code's Problems panel). The Musa extension contributes diagnostics automatically -- Claude Code can see them.
 
 1. **URI handler:** `vscode://anthropic.claude-code/open?prompt=<encoded>` pre-fills the chat with a prompt. Extensions
-    can open this URI programmatically.
+   can open this URI programmatically.
 
 1. **MCP server consumption:** Claude Code consumes MCP servers configured in `~/.claude/settings.json`. A Musa MCP
-    server registered there would be available to Claude Code in all projects.
+   server registered there would be available to Claude Code in all projects.
 
 1. **Plugin system:** Claude Code plugins package slash commands, subagents, hooks, and MCP servers. A Musa plugin could
-    provide `/prove`, `/type`, etc.
+   provide `/prove`, `/type`, etc.
 
 1. **Context mechanisms:** Claude Code picks up `@file` mentions, selected text, and diagnostics automatically. The best
-    integration path is ensuring the Musa extension produces rich diagnostics, hover info, and code actions that Claude
-    Code can observe.
+   integration path is ensuring the Musa extension produces rich diagnostics, hover info, and code actions that Claude
+   Code can observe.
 
 ### Practical integration
 
 The most impactful integration: **ensure the Musa LSP produces excellent diagnostics and code actions.** Claude Code
-already reads VS Code diagnostics. If the Musa server reports "Expected type `Int64` at line 5, got `String`" with a code
-action to fix it, Claude Code can see and act on that.
+already reads VS Code diagnostics. If the Musa server reports "Expected type `Int64` at line 5, got `String`" with a
+code action to fix it, Claude Code can see and act on that.
 
 For deeper integration, an MCP server wrapping `musa-prover` or compiler queries works with both VS Code agent mode and
 Claude Code.
@@ -404,8 +404,8 @@ Three layers, from most reusable to most VS Code-specific:
 
 ### Layer 1: MCP server (highest reusability)
 
-Build an MCP server wrapping Musa compiler queries and `musa-prover`. Works with VS Code agent mode, Claude Code, and any
-MCP client.
+Build an MCP server wrapping Musa compiler queries and `musa-prover`. Works with VS Code agent mode, Claude Code, and
+any MCP client.
 
 Tools to expose:
 

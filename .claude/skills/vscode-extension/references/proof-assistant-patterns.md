@@ -21,13 +21,13 @@ architecture is the most relevant for Musa.
 
 Lerna monorepo with five packages:
 
-| Package                         | Role                                                        |
-| ------------------------------- | ----------------------------------------------------------- |
-| `vscode-lean4`                  | Main VS Code extension (Node.js, Extension Host)            |
-| `lean4-infoview-api`            | Shared type definitions for extension-webview communication |
-| `lean4-infoview`                | React application running in a sandboxed webview            |
-| `lean4-unicode-input`           | Abbreviation expansion logic                                |
-| `lean4-unicode-input-component` | DOM integration for Unicode input                           |
+| Package | Role |
+| --- | --- |
+| `vscode-lean4` | Main VS Code extension (Node.js, Extension Host) |
+| `lean4-infoview-api` | Shared type definitions for extension-webview communication |
+| `lean4-infoview` | React application running in a sandboxed webview |
+| `lean4-unicode-input` | Abbreviation expansion logic |
+| `lean4-unicode-input-component` | DOM integration for Unicode input |
 
 ### Three-process architecture
 
@@ -91,11 +91,11 @@ demand.
 ### Lean server internals
 
 - **Watchdog + per-file workers:** One watchdog manages the server. One worker process per open file. A crash in one
-    file does not affect others.
+  file does not affect others.
 - **Snapshot tree:** Each top-level command produces a snapshot storing diagnostics and processing state. Snapshots are
-    reused between file versions -- only changed commands re-elaborate.
+  reused between file versions -- only changed commands re-elaborate.
 - **InfoTree:** Stores elaboration metadata: goal states, subterm info, local contexts, metavariable contexts, macro
-    expansions. Powers hover info and goal display.
+  expansions. Powers hover info and goal display.
 - **Import dependencies:** `.olean` files. Users manually trigger "refresh file dependencies."
 
 ### InfoView React architecture
@@ -198,7 +198,7 @@ ______________________________________________________________________
 Two extensions:
 
 - **idris-vscode:** Uses Idris IDE Protocol (s-expression-based, not LSP). Custom protocol for type checking, proof
-    search, case splitting.
+  search, case splitting.
 - **idris2-lsp-vscode:** Uses a proper LSP server (`idris2-lsp`) with standard features plus semantic highlighting.
 
 ______________________________________________________________________
@@ -250,15 +250,15 @@ ______________________________________________________________________
 LSP + custom extensions (prefixed `$/musa/` for notifications, `musa/` for requests). Implement standard LSP features in
 the server, then add:
 
-| Extension            | Purpose                                                    |
-| -------------------- | ---------------------------------------------------------- |
-| `$/musa/fileProgress` | Per-declaration type-checking progress                     |
-| `musa/proofState`     | Goal state at cursor (typed holes, context, expected type) |
-| `musa/viewCBPV`       | Value/computation split for a term                         |
-| `musa/viewEffects`    | Inferred effect rows                                       |
-| `musa/viewGrades`     | Resource usage grades                                      |
-| `musa/expandHandler`  | Expand effect handler clauses                              |
-| `musa/normalForm`     | Normalized/evaluated form                                  |
+| Extension | Purpose |
+| --- | --- |
+| `$/musa/fileProgress` | Per-declaration type-checking progress |
+| `musa/proofState` | Goal state at cursor (typed holes, context, expected type) |
+| `musa/viewCBPV` | Value/computation split for a term |
+| `musa/viewEffects` | Inferred effect rows |
+| `musa/viewGrades` | Resource usage grades |
+| `musa/expandHandler` | Expand effect handler clauses |
+| `musa/normalForm` | Normalized/evaluated form |
 
 ### Server architecture
 

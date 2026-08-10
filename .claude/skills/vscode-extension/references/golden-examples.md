@@ -31,10 +31,10 @@ and connect it to VS Code.
 ### Server architecture principles
 
 1. **Explicit event loop.** Single-threaded main loop using `crossbeam_channel::select!`. All triggers visible in one
-    place. No hidden async.
+   place. No hidden async.
 
 1. **Snapshot pattern.** `AnalysisHost` = mutable state. `Analysis` = cheap immutable snapshot (via `Arc`). Background
-    threads work on snapshots. Main loop processes events.
+   threads work on snapshots. Main loop processes events.
 
 1. **Request dispatch.** Type-safe `RequestDispatcher` with fluent API:
 
@@ -48,13 +48,13 @@ and connect it to VS Code.
     Fast requests run on main thread. Slow requests spawn to background.
 
 1. **Cancellation via Salsa.** Input changes bump a global revision counter. Background threads detect this and panic
-    with `Cancelled`. The `ide` layer catches it.
+   with `Cancelled`. The `ide` layer catches it.
 
 1. **Robustness.** Functions return `(T, Vec<Error>)` not `Result<T, Error>`. Partial results always available, even
-    from broken code.
+   from broken code.
 
 1. **Separation of concerns.** Only `rust-analyzer` crate knows about LSP/JSON. The `ide` crate provides analysis using
-    plain data types. `from_proto`/`to_proto` modules handle conversion (including UTF-16 offset translation).
+   plain data types. `from_proto`/`to_proto` modules handle conversion (including UTF-16 offset translation).
 
 1. **Push diagnostics.** Computed proactively when system becomes quiescent, then pushed to client.
 
@@ -63,9 +63,9 @@ and connect it to VS Code.
 Two namespaces:
 
 - `experimental/*` -- features intended for upstream LSP (parentModule, joinLines, runnables, matchingBrace, onEnter,
-    externalDocs)
+  externalDocs)
 - `rust-analyzer/*` -- permanently Rust-specific (syntaxTree, viewHir, expandMacro, reloadWorkspace, analyzerStatus,
-    relatedTests, openCargoToml)
+  relatedTests, openCargoToml)
 
 All negotiated via `experimental` capabilities field.
 
@@ -107,17 +107,17 @@ The most relevant reference for building a proof-assistant VS Code extension. Se
 ### Key patterns
 
 1. **Three-process architecture.** Extension Host (Node.js) + Webview (React) + Language Server (Lean). Extension
-    bridges the other two.
+   bridges the other two.
 
 1. **RPC pointer pattern.** Opaque server-side handles for proof state objects. Never serialize large environments.
 
 1. **File progress notification.** Custom `$/lean/fileProgress` for per-range checking status, rendered as gutter
-    decorations.
+   decorations.
 
 1. **Multi-project support.** Map from folder URIs to client instances. Each project gets its own server.
 
 1. **Two-phase activation.** Always-enabled features (PATH, installers, commands) + deferred features (project
-    detection, server launch).
+   detection, server launch).
 
 ### Key takeaways for Musa
 
@@ -159,7 +159,7 @@ Well-maintained, Microsoft-backed. Standard LSP architecture with gopls server.
 Key patterns:
 
 - **Session/View/Snapshot hierarchy.** Session = client connection. View = workspace. Snapshot = immutable state at a
-    point in time.
+  point in time.
 - **Content-hash invalidation.** File identity by URI + hash, not timestamps.
 - **Pruning-based incremental rebuilds.** Skip recompilation when export summaries unchanged.
 - **Persistent file cache.** Cross-process cache for type info. Makes second startup fast.
@@ -174,16 +174,16 @@ ______________________________________________________________________
 
 ## Pattern summary
 
-| Pattern                             | Used by               | Relevance to Musa                                  |
-| ----------------------------------- | --------------------- | ------------------------------------------------- |
-| Snapshot-based concurrency          | rust-analyzer, gopls  | High -- safe concurrent analysis                  |
-| Partial results from errors         | rust-analyzer         | High -- IDE must work with broken code            |
-| Separation of protocol/internals    | rust-analyzer         | High -- keep LSP details out of compiler          |
-| RPC pointers for proof state        | Lean 4, coq-lsp       | High -- avoid serializing large contexts          |
-| React webview for proof UI          | Lean 4, VsCoq, Agda   | High -- only way to render structured proof state |
-| File progress notification          | Lean 4, coq-lsp       | High -- users need to see checking progress       |
-| Custom LSP extensions               | rust-analyzer, Lean 4 | Medium -- needed for Musa-specific features        |
-| Multi-project support               | Lean 4                | Medium -- needed for workspaces                   |
-| Incremental query framework (Salsa) | rust-analyzer         | Medium -- needed for large-scale performance      |
-| Automatic binary installation       | vscode-haskell        | Low -- Musa is cargo-installable                   |
-| User widgets                        | Lean 4                | Low -- not needed initially                       |
+| Pattern | Used by | Relevance to Musa |
+| --- | --- | --- |
+| Snapshot-based concurrency | rust-analyzer, gopls | High -- safe concurrent analysis |
+| Partial results from errors | rust-analyzer | High -- IDE must work with broken code |
+| Separation of protocol/internals | rust-analyzer | High -- keep LSP details out of compiler |
+| RPC pointers for proof state | Lean 4, coq-lsp | High -- avoid serializing large contexts |
+| React webview for proof UI | Lean 4, VsCoq, Agda | High -- only way to render structured proof state |
+| File progress notification | Lean 4, coq-lsp | High -- users need to see checking progress |
+| Custom LSP extensions | rust-analyzer, Lean 4 | Medium -- needed for Musa-specific features |
+| Multi-project support | Lean 4 | Medium -- needed for workspaces |
+| Incremental query framework (Salsa) | rust-analyzer | Medium -- needed for large-scale performance |
+| Automatic binary installation | vscode-haskell | Low -- Musa is cargo-installable |
+| User widgets | Lean 4 | Low -- not needed initially |

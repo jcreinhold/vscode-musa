@@ -35,7 +35,7 @@ ______________________________________________________________________
 ## Lifecycle
 
 1. **Client sends `initialize`** -- includes `processId`, `rootUri`, `workspaceFolders`, and `capabilities` (what the
-    client supports)
+   client supports)
 1. **Server responds** -- declares its own `capabilities` (what features it will provide)
 1. **Client sends `initialized`** -- server can now send requests to client
 1. **Normal operation** -- requests, responses, and notifications flow both directions
@@ -57,13 +57,13 @@ ______________________________________________________________________
 
 ### Document synchronization
 
-| Method                   | Direction | Purpose                                |
-| ------------------------ | --------- | -------------------------------------- |
-| `textDocument/didOpen`   | C -> S    | Document opened, full text sent        |
-| `textDocument/didChange` | C -> S    | Document changed (full or incremental) |
-| `textDocument/didSave`   | C -> S    | Document saved                         |
-| `textDocument/didClose`  | C -> S    | Document closed                        |
-| `textDocument/willSave`  | C -> S    | About to save                          |
+| Method | Direction | Purpose |
+| --- | --- | --- |
+| `textDocument/didOpen` | C -> S | Document opened, full text sent |
+| `textDocument/didChange` | C -> S | Document changed (full or incremental) |
+| `textDocument/didSave` | C -> S | Document saved |
+| `textDocument/didClose` | C -> S | Document closed |
+| `textDocument/willSave` | C -> S | About to save |
 
 **Sync modes:** `TextDocumentSyncKind.Full` sends entire text on each change. `Incremental` sends only the edited range.
 Incremental is better for performance but requires the server to maintain document state.
@@ -257,9 +257,9 @@ The LSP spec allows custom methods. Any method name is valid for extensions.
 ### Convention from rust-analyzer
 
 - `experimental/*` -- features intended to become standard LSP (e.g., `experimental/parentModule`,
-    `experimental/joinLines`)
+  `experimental/joinLines`)
 - `rust-analyzer/*` -- permanently language-specific (e.g., `rust-analyzer/syntaxTree`, `rust-analyzer/viewHir`,
-    `rust-analyzer/expandMacro`)
+  `rust-analyzer/expandMacro`)
 
 ### Negotiation
 
@@ -279,15 +279,15 @@ Custom capabilities are exchanged via the `experimental` field in `ClientCapabil
 
 Suggested custom notifications and requests:
 
-| Method               | Direction | Purpose                                          |
-| -------------------- | --------- | ------------------------------------------------ |
-| `$/musa/fileProgress` | S -> C    | Report per-declaration type-checking progress    |
-| `musa/viewTimeline`   | C -> S    | Show the elaborated kernel timeline for a part   |
-| `musa/viewEffects`    | C -> S    | Display inferred effect rows                     |
-| `musa/viewGrades`     | C -> S    | Show resource usage grades                       |
-| `musa/expandHandler`  | C -> S    | Expand effect handler clauses                    |
-| `musa/viewNormalForm` | C -> S    | Show normalized form of an expression            |
-| `musa/proofState`     | C -> S    | Get proof state at cursor (goals, context, type) |
+| Method | Direction | Purpose |
+| --- | --- | --- |
+| `$/musa/fileProgress` | S -> C | Report per-declaration type-checking progress |
+| `musa/viewTimeline` | C -> S | Show the elaborated kernel timeline for a part |
+| `musa/viewEffects` | C -> S | Display inferred effect rows |
+| `musa/viewGrades` | C -> S | Show resource usage grades |
+| `musa/expandHandler` | C -> S | Expand effect handler clauses |
+| `musa/viewNormalForm` | C -> S | Show normalized form of an expression |
+| `musa/proofState` | C -> S | Get proof state at cursor (goals, context, type) |
 
 ### Implementation pattern
 
