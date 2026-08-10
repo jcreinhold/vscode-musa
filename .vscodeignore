@@ -1,0 +1,17 @@
+# Agent/AI tooling — not part of the shipped extension
+.agents/
+.claude/
+.pi/
+.pi-subagents/
+AGENTS.md
+CLAUDE.md
+
+# Development artifacts
+test/
+build/
+node_modules/
+esbuild.js
+tsconfig.json
+src/
+*.vsix
+.DS_Store
