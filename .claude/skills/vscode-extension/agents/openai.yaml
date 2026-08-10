@@ -1,0 +1,4 @@
+interface:
+  display_name: "VS Code Extension"
+  short_description: "Build and debug VS Code language extensions"
+  default_prompt: "Use $vscode-extension to build, debug, or review a VS Code extension or Rust LSP integration."
