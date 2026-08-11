@@ -96,7 +96,7 @@
             },
             {
               "name": "variable.other.musa",
-              "match": "\\b(harmony|list|option|pitch|scale|[a-zA-Z_]+)\\b"
+              "match": "\\b(harmony|pitch|scale|[a-zA-Z_]+)\\b"
             }
           ]
         }
@@ -106,7 +106,7 @@
       "patterns": [
         {
           "name": "keyword.control.musa",
-          "match": "\\b(around|arranger|as|assign|at|bar|bus|chord|clef|composer|copyright|crescendo|degree|diminuendo|down|dynamic|ending|false|fn|fragment|frame|grace|groove|harmony|import|improvise|in|invert|key|let|library|list|make|mark|master|match|meter|mobile|mod|modulate|module|motif|music|none|note|option|output|over|part|patch|performance|phrase|piece|pitch|profile|repeat|rest|retrograde|route|scale|score|section|send|senza|signature|slur|some|stack|step|stretch|structure|studio|subtitle|template|tempo|to|transpose|true|tuplet|up|voice|with)\\b"
+          "match": "\\b(List|None|Option|Some|around|arranger|as|assert|assign|at|bar|bus|chord|clef|composer|copyright|crescendo|degree|diminuendo|down|dynamic|ending|false|fn|fragment|frame|grace|groove|harmony|import|improvise|in|invert|kernel|key|let|library|make|mark|master|match|meter|mobile|mod|modulate|module|motif|music|note|output|over|part|patch|performance|phrase|piece|pitch|profile|repeat|rest|retrograde|route|scale|score|section|send|senza|signature|slur|stack|step|stretch|structure|studio|subtitle|template|tempo|to|transpose|true|tuplet|up|voice|with)\\b"
         }
       ]
     },
@@ -182,7 +182,7 @@
       "patterns": [
         {
           "name": "punctuation.separator.musa",
-          "match": "#|,|\\.|/|:|;|>|\\^|\\|"
+          "match": "#|\\$|,|\\.|/|:|;|<|>|\\^|\\|"
         }
       ]
     },

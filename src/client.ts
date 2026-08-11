@@ -1,6 +1,8 @@
 import { execFileSync } from "child_process";
 import * as vscode from "vscode";
 import { LanguageClient, ServerOptions, TransportKind } from "vscode-languageclient/node";
+import { registerAnalysis } from "./analysis";
+import { registerBundledSource } from "./bundled";
 
 /**
  * The extension is a launcher and a registration, nothing more (prompt 81):
@@ -21,6 +23,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       await start();
     }),
   );
+  // Registered once, for the life of the extension: both read through
+  // whatever client is running when they are asked, so a restart does not
+  // leave a stale provider behind.
+  registerBundledSource(context, () => client);
+  registerAnalysis(context, () => client);
   await start();
 }
 

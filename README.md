@@ -14,6 +14,18 @@ The extension owns no vocabulary and no musical knowledge:
 - **Everything else** is the prompt-77 language server (`musa-lsp`) answering over stdio. The extension is a launcher
   and a registration.
 
+Two of those registrations are worth naming, because they are the only places the extension puts anything on screen that
+VS Code would not show by itself:
+
+- **The standard library opens read-only.** Go-to-definition on an imported name lands in `musa-stdlib:/std/…`, a module
+  whose text is compiled into the server binary. A content provider asks the server for that text (`musa.bundledSource`)
+  and shows it in a document VS Code will not let you edit — which is the truth, since an edit would have nowhere to
+  land. The extension carries no copy of the standard library.
+- **Analysis is asked for, and shown as a report.** The server offers one code lens per analysis kind; the lens runs
+  `musa.analyze`, and the typed report it answers with is rendered as markdown beside the source. It never reaches the
+  Problems pane: a cadence with two of its three kinds of evidence is a finding with an absence recorded, not a mistake.
+  Every sentence in the report is the server's own.
+
 ## Install
 
 1. Build the server, in a checkout of the musa repository:
@@ -48,7 +60,12 @@ npm run test         # the generator's unit tests
 npm run grammar      # regenerate the TextMate grammar from the musa fixtures (MUSA_REPO=../musa)
 ```
 
-One command: **Musa: Restart Language Server**.
+One command in the palette: **Musa: Restart Language Server**. `musa.analyze` and `musa.bundledSource` are registered
+too, but they are the server's to invoke — from a code lens and from a definition link — so they are deliberately not in
+the palette, where they would need arguments a person has no way to supply.
+
+`SMOKE.md` is the manual checklist for what the protocol laws cannot see: whether VS Code actually shows what the server
+answers.
 
 ## What this extension does not do
 
