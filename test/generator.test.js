@@ -77,7 +77,7 @@ test('the patterns are valid regexes in the fixture’s own order', () => {
 test('a spelled punctuation mark is an operator, a bracket, or a separator', () => {
   const { spellings } = fixtures();
   const marks = spellings.filter(([, className]) => className === 'punctuation').map(([text]) => text);
-  for (const mark of ['->', '|>', '=', '-', '~', '{', '}', '[', ']', '(', ')', ';', ',', ':', '.']) {
+  for (const mark of ['->', '|>', '=', '==', '-', '+', '*', '~', '?', '{', '}', '[', ']', '(', ')', ';', ',', ':', '.']) {
     assert.ok(marks.includes(mark), `the fixture lost "${mark}" — check the operator split in the generator`);
   }
 });
@@ -102,8 +102,12 @@ test('the pitch and duration patterns paint the syntax the corpus is written in'
   const painted = (text) => durations.some((rule) => rule.test(text));
 
   // `b` is both a letter and a flat: `b2` is B, `bb2` is B flat.
-  for (const written of ['c4', 'a-1', 'a#5', 'ab3', 'b2', 'bb2', 'f##3', 'cn5']) {
+  for (const written of ['c4', 'a-1', 'a#5', 'ab3', 'b2', 'bb2', 'f###3', 'abbb3', 'cn5']) {
     assert.ok(pitch.test(written), `"${written}" is a pitch the lexer accepts`);
+  }
+  const interval = whole(grammar.repository.interval.patterns[0].match);
+  for (const written of ['P5', 'M10', 'm3', 'AA4', 'dim5', 'ddd7']) {
+    assert.ok(interval.test(written), `"${written}" is an interval the lexer accepts`);
   }
   // Both spellings of a duration, dots and all.
   for (const written of ['/1', '/16', '/2.', '/4..', '1/4', '3/8']) {
@@ -112,6 +116,19 @@ test('the pitch and duration patterns paint the syntax the corpus is written in'
   // And what is not a duration stays a plain number: a tempo is not a rhythm.
   assert.ok(!painted('96'), 'a metronome mark is a number');
   assert.ok(!painted('0.55'), 'a gain is a number');
+});
+
+test('operators prefer the longest lexer token and names may contain trailing digits', () => {
+  const { spellings, classes, moduleNames } = fixtures();
+  const grammar = build(spellings, classes, moduleNames);
+  const operator = grammar.repository.operators.patterns[0].match;
+  assert.ok(operator.indexOf('->') < operator.lastIndexOf('-'), '`->` must precede its `-` prefix');
+  assert.ok(operator.indexOf('==') < operator.lastIndexOf('='), '`==` must precede its `=` prefix');
+
+  const name = new RegExp(`^(?:${grammar.repository.name.patterns[0].match})$`);
+  for (const written of ['voice2', 'major7', 'drop2']) {
+    assert.ok(name.test(written), `"${written}" is an identifier the lexer accepts`);
+  }
 });
 
 test('import and mod statements scope borrowed words as names, not keywords', () => {
