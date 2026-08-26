@@ -37,6 +37,18 @@ repository's law tests, in which case it is a bug there.
       the highlight to the next parameter.
 - [ ] **Completion, named parameters.** Inside a call to a declared function, the parameter names appear first in the
       menu, as `name:`, with the default shown where there is one.
+- [ ] **Sound declaration help.** Open `../musa/examples/glass-mountain.musa`. Hover `lowpass`; the popup gives the
+      checked source signature, exact unit/default/range facts, source origin, and registered primitive support. Inside
+      its call, `resonance:` completes before the general vocabulary and no `q:` alias appears.
+- [ ] **Instrument contract.** Hover the selected instrument and inspect completion around its sound binding. The editor
+      names the source declaration/profile and exposed controls; it does not present private graph paths as musical
+      controls or call the part a track.
+- [ ] **Foreign adapter and asset state.** In a project containing an `instrument ... from` declaration, hover an SFZ
+      or SoundFont instrument. The popup labels `sfz@1` or `sf2@1`, the checked sample-map result, named refusal classes,
+      and the current verified/missing/unlocked/digest asset state. The extension does not open or parse the foreign file.
+- [ ] **Mix and media vocabulary.** Completion and hover explain `room`, `bus`, `send`, `route`, `clip`, and
+      `fixed_media` from server/source facts. A musical clip is described in performed beats; a fixed-media cue is
+      described in physical time.
 - [ ] **Completion, policies.** Inside `assert realizes(chord c major, ` the three realization policies appear at the
       top of the menu, and nothing else new does.
 - [ ] **Completion, kernel holes.** In `../musa/examples/kernel-splice.musa`, inside `${` the music-typed bindings sort
@@ -56,6 +68,9 @@ repository's law tests, in which case it is a bug there.
       is not a mistake.
 - [ ] **Kernel documents.** Open a `.musa.kernel` file. Highlighting and the outline answer; hover and completion do
       not offer surface-language names, because a kernel document has none.
+- [ ] **Stale semantic answers.** Break the current source after one successful compile. Sound hover/navigation keeps
+      answering from the last valid artifact with its stale revision relationship, while asset status reflects the
+      current verified closure.
 
 ## Recording a run
 
